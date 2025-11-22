@@ -1,3 +1,6 @@
+"use server"
+
+
 import { descrypt } from "@/lib/brycpt/descrypt";
 import { octokitClient } from "@/lib/github/octokit";
 
@@ -6,6 +9,3 @@ export async function removeFollowerAction(session: any, userName: string) {
   await octokitClient(3, token, session.user.githubProfile.login, userName);
 }
 
-export function openInNewTab(url: string) {
-  window.open(url, "_blank");
-}

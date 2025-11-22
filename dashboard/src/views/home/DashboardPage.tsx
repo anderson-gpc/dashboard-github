@@ -2,16 +2,13 @@
 
 import { useSession } from "next-auth/react";
 import { Session } from "@auth/core/types";
-import { Flex, Card, Splitter, Button } from "antd";
+import { Flex, Card, Splitter } from "antd";
 import useDashboardStyles from "@/assets/css/__dashboard.style";
 import { ThreeDot } from "react-loading-indicators";
 import { Colors } from "@/constants/colors";
+import { removeFollowerAction } from "@/actions/github/github-action";
 
 import { useDashboardData } from "@/hooks/useDashboardData";
-import {
-  removeFollowerAction,
-  openInNewTab,
-} from "@/actions/github/github-action";
 
 import NetworkComponent from "@/components/molecules/Network";
 import IssueCard from "@/components/molecules/IssueCard";
@@ -57,7 +54,7 @@ export default function DashboardPage() {
       initial={{ y: 0, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 1, ease: "easeOut" }}
-      style={{height: "100%"}}
+      style={{ height: "100%" }}
     >
       <Flex className={styles.dashboard}>
         <Splitter className={styles.splitter}>
@@ -68,7 +65,7 @@ export default function DashboardPage() {
                   key={element.id}
                   data={element}
                   onRemove={() => removeFollowerAction(session, element.login)}
-                  onView={() => openInNewTab(element.html_url)}
+                  onView={() => window.open(element.html_url, "_blank")}
                 />
               ))}
             </Card>
@@ -81,7 +78,7 @@ export default function DashboardPage() {
                   key={element.id}
                   data={element}
                   onRemove={() => removeFollowerAction(session, element.login)}
-                  onView={() => openInNewTab(element.html_url)}
+                  onView={() => window.open(element.html_url, "_blank")}
                 />
               ))}
             </Card>
@@ -94,7 +91,7 @@ export default function DashboardPage() {
                   <IssueCard
                     key={issue.id}
                     issue={issue}
-                    onView={(issue) => openInNewTab(issue.html_url)}
+                    onView={(issue) => window.open(issue.html_url, "_blank")}
                   />
                 ))}
               </Flex>

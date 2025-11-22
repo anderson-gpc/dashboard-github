@@ -119,6 +119,9 @@ DATABASE_URL=definir_sua_database_url
 
 # Next.js
 NODE_ENV=development
+
+# Encrypt
+CRYPT_KEY=sua_cript_key
 ```
 
 ---
@@ -145,8 +148,8 @@ yarn install
 Crie um arquivo `.env.local` na raiz do projeto:
 
 ```bash
-cp .env.example .env.local
-# Edite o arquivo .env.local com suas credenciais
+cp env.example .env
+# Edite o arquivo .env
 ```
 
 ### 4. Configure o banco de dados

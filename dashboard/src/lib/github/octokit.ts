@@ -17,30 +17,62 @@ export const octokitClient = async (
   userDelete?: string
 ): Promise<any> => {
   try {
-    let query: string = "";
+    const octokit = new Octokit({ auth: token });
+
+    const mapUser = (response: any) =>
+      response.data.map((user: any) => ({
+        id: user.id,
+        login: user.login,
+        avatar_url: user.avatar_url,
+        html_url: user.html_url,
+      }));
+    
+    const mapIssue = (response: any) => response.data.map((issue: any) => ({
+      id: issue.id,
+      html_url: issue.html_url,
+      title: issue.title,
+      name: issue.repository.name,
+      comments: issue.comments,
+      repository_url: issue.repository_url,
+      user_avatar_url: issue.user.avatar_url,
+      user_html_url: issue.user.html_url,
+      user_login: issue.user.login,
+    }))
 
     switch (request) {
       case RequestTypes.Verify:
-        query = `GET /user`;
-        break;
+        return octokit.request("GET /user");
+
       case RequestTypes.Followers:
-        query = `GET /users/${login}/followers`;
-        break;
+        return octokit.paginate(
+          "GET /users/{username}/followers",
+          { username: login, per_page: 100 },
+          mapUser
+        );
+
       case RequestTypes.Following:
-        query = `GET /users/${login}/following`;
-        break;
+        return octokit.paginate(
+          "GET /users/{username}/following",
+          { username: login, per_page: 100 },
+          mapUser
+        );
+
       case RequestTypes.DeleteFollowing:
         if (!userDelete) throw new Error("userDelete requirido");
-        query = `DELETE /user/following/${userDelete}`;
-        break;
+        return octokit.request.endpoint("DELETE /user/following/{username}", {
+          username: userDelete,
+        });
+
       case RequestTypes.Issues:
-        query = `GET /user/issues`;
-        break;
+        return octokit.paginate(
+          "GET /user/issues",
+          { per_page: 100 },
+          mapIssue
+        );
+
       default:
         throw new Error("Request type desconhecido");
     }
-
-    return await new Octokit({ auth: token }).request(query);
   } catch (error: any) {
     let message = "Erro desconhecido";
 

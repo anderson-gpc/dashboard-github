@@ -18,7 +18,7 @@ export default function IssueCard({ issue, onView }: IssueCardProps) {
 
         <Typography.Text>
           <strong>Repositório:</strong>{" "}
-          {issue.repository?.name ?? issue.repository_url}
+          {issue.name ?? issue.repository_url}
         </Typography.Text>
 
         <Typography.Text>
@@ -26,15 +26,15 @@ export default function IssueCard({ issue, onView }: IssueCardProps) {
         </Typography.Text>
 
         <Flex gap="0.75rem" align="center">
-          <Avatar src={issue.user?.avatar_url} />
+          <Avatar src={issue.user_avatar_url} />
           <Typography.Text>
             <strong>Autor:</strong>{" "}
             <a
               onClick={() => {
-                window.open(`${issue.user.html_url}`, "_blank");
+                window.open(`${issue.user_html_url}`, "_blank");
               }}
             >
-              {issue.user?.login}
+              {issue.user_login}
             </a>
           </Typography.Text>
         </Flex>

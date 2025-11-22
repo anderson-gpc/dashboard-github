@@ -41,17 +41,17 @@ export const octokitClient = async (
 
     switch (request) {
       case RequestTypes.Verify:
-        return octokit.request("GET /user");
+        return await octokit.request("GET /user");
 
       case RequestTypes.Followers:
-        return octokit.paginate(
+        return await octokit.paginate(
           "GET /users/{username}/followers",
           { username: login, per_page: 100 },
           mapUser
         );
 
       case RequestTypes.Following:
-        return octokit.paginate(
+        return await octokit.paginate(
           "GET /users/{username}/following",
           { username: login, per_page: 100 },
           mapUser
@@ -59,12 +59,11 @@ export const octokitClient = async (
 
       case RequestTypes.DeleteFollowing:
         if (!userDelete) throw new Error("userDelete requirido");
-        return octokit.request.endpoint("DELETE /user/following/{username}", {
+        return await octokit.request.endpoint("DELETE /user/following/{username}", {
           username: userDelete,
         });
-
       case RequestTypes.Issues:
-        return octokit.paginate(
+        return await octokit.paginate(
           "GET /user/issues",
           { per_page: 100 },
           mapIssue

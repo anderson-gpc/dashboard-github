@@ -21,6 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
       <body className={`${poppins.variable} w-full h-full  overflow-hidden`}>
         <Provider>{children}</Provider>
       </body>

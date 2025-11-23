@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
     "@octokit/rest": "^22.0.1",
+    "@prisma/adapter-pg": "^7.0.0",
     "@prisma/client": "^6.19.0",
     "antd": "^5.28.0",
     "antd-style": "^3.7.1",

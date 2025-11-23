@@ -59,7 +59,7 @@ export const octokitClient = async (
 
       case RequestTypes.DeleteFollowing:
         if (!userDelete) throw new Error("userDelete requirido");
-        return await octokit.request.endpoint("DELETE /user/following/{username}", {
+        return await octokit.request("DELETE /user/following/{username}", {
           username: userDelete,
         });
       case RequestTypes.Issues:

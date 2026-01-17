@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState, useRef, useContext } from "react";
-import { descrypt } from "@/lib/brycpt/descrypt";
 import { octokitClient } from "@/lib/github/octokit";
 import { NetworkInterface } from "@/interfaces/network-interface";
-import { getRefinedAcessToken } from "../actions/database/token-action";
+import { getRefinedAcessToken } from "./usePAT";
 import { HomeContext } from "@/src/context";
 
 export function useDashboardData(session: any) {
@@ -35,16 +34,17 @@ export function useDashboardData(session: any) {
       let acess: string | null;
 
       if (!session.acessToken)
-        acess = await getRefinedAcessToken(session!.user!.githubProfile!.id!);
+        acess = await getRefinedAcessToken("refinedAcessToken");
       else acess = session.acessToken;
 
       if (!acess || typeof acess !== "string") {
-        console.warn("Sem token disponível pra decriptar");
+        console.warn("Sem token disponível");
         setLoading(false);
         return;
       }
 
-      const githubToken = await descrypt(acess);
+      // Token já vem descriptografado do servidor, não precisa descriptografar novamente
+      const githubToken = acess;
       const login = session.user.githubProfile.login;
 
       const followersResponse = await octokitClient(1, githubToken, login);

@@ -1,6 +1,8 @@
 "use server";
 
 import { Octokit } from "@octokit/rest";
+import { cookies } from "next/headers";
+import { decrypt } from "../brycpt/descrypt";
 
 enum RequestTypes {
   Verify = 0,
@@ -10,6 +12,19 @@ enum RequestTypes {
   Issues = 4,
 }
 
+async function getOctokit(token?: string) {
+  if (token) {
+    return new Octokit({ auth: token });
+  }
+  
+  const encrypted = (await cookies()).get("github_pat")?.value;
+  if (!encrypted) {
+    throw new Error("Token não encontrado nos cookies");
+  }
+  const decrypted = await decrypt(encrypted);
+  return new Octokit({ auth: decrypted });
+}
+
 export const octokitClient = async (
   request: RequestTypes,
   token: string,
@@ -17,7 +32,7 @@ export const octokitClient = async (
   userDelete?: string
 ): Promise<any> => {
   try {
-    const octokit = new Octokit({ auth: token });
+    const octokit = await getOctokit(token);
 
     const mapUser = (response: any) =>
       response.data.map((user: any) => ({

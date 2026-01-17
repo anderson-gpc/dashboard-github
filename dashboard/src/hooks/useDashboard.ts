@@ -3,10 +3,8 @@
 
 import { useSession } from "next-auth/react";
 import { useState, useContext, useRef, useEffect } from "react";
-import { verifyUser } from "@/actions/database/user-action";
-import { verifyRefinedAcessToken } from "@/actions/database/token-action";
 import { HomeContext } from "@/src/context";
-import { User } from "@/interfaces/user-interface";
+import { getRefinedAcessToken } from "./usePAT";
 
 export function useDashboard() {
       const { data: session, status } = useSession();
@@ -25,15 +23,10 @@ export function useDashboard() {
             if (checkedUserIdRef.current === userId && !tokenChanged) {
               return;
             }
-    
-            const user: User = {
-              login: githubProfile.login,
-              githubId: userId,
-            };
-    
+
             try {
-              await verifyUser(user);
-              const hasToken = await verifyRefinedAcessToken(user.githubId);
+              const tokenValue = await getRefinedAcessToken("refinedAcessToken");
+              const hasToken = tokenValue !== null;
               if (hasToken) setActionGit(true);
               else setActionGit(false);
               checkedUserIdRef.current = userId;

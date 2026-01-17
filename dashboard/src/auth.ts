@@ -1,6 +1,6 @@
 import NextAuth, { User } from "next-auth";
 import GitHub from "next-auth/providers/github";
-import { getRefinedAcessToken } from "@/src/actions/database/token-action";
+import { getServerTokenFromCookie } from "@/lib/auth/server-token";
 
 declare module "next-auth" {
   interface Session {
@@ -26,9 +26,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       session.user.githubProfile = token.githubProfile;
       
-      const refinedAcessToken = await getRefinedAcessToken(
-        session.user.githubProfile.id
-      );
+      const refinedAcessToken = await getServerTokenFromCookie();
 
       if (refinedAcessToken != null) {
         session.acessToken = refinedAcessToken;

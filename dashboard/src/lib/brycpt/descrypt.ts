@@ -4,20 +4,35 @@ import crypto from "crypto";
 
 const key = Buffer.from(process.env.CRYPT_KEY!, "base64");
 
-export async function descrypt(token: string) {
-  const [encryptedBase64, ivBase64, tagBase64] = token.split(":");
+export async function decrypt(token: string): Promise<string> {
+  try {
+    const parts = token.split(":");
+    if (parts.length !== 3) {
+      throw new Error(`Token inválido: esperado formato 'data:iv:tag', recebido '${token.substring(0, 50)}...'`);
+    }
 
-  const encrypted = Buffer.from(encryptedBase64, "base64");
-  const iv = Buffer.from(ivBase64, "base64");
-  const tag = Buffer.from(tagBase64, "base64");
+    const [data, iv, tag] = parts;
 
-  const deciper = crypto.createDecipheriv("aes-256-gcm", key, iv);
-  deciper.setAuthTag(tag);
+    if (!data || !iv || !tag) {
+      throw new Error("Token criptografado incompleto - partes vazias detectadas");
+    }
 
-  const descrypted = Buffer.concat([
-    deciper.update(encrypted),
-    deciper.final(),
-  ]);
+    const decipher = crypto.createDecipheriv(
+      "aes-256-gcm",
+      key,
+      Buffer.from(iv, "base64")
+    );
 
-  return descrypted.toString();
+    decipher.setAuthTag(Buffer.from(tag, "base64"));
+
+    const decrypted = Buffer.concat([
+      decipher.update(Buffer.from(data, "base64")),
+      decipher.final(),
+    ]);
+
+    return decrypted.toString("utf8");
+  } catch (error) {
+    console.error("Erro ao descriptografar:", error);
+    throw error;
+  }
 }
